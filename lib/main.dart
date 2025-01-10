@@ -40,8 +40,8 @@ class _SearchBarAppState extends State<SearchBarApp> {
             children: [
               Column(
                 children: [
-                  SearchAnchor(
-                      viewElevation: 4.0,
+                  AppSearchAnchor(
+                      viewElevation: 1.0,
                       keyboardType: TextInputType.number,
                       builder:
                           (BuildContext context, SearchController controller) {
@@ -51,6 +51,7 @@ class _SearchBarAppState extends State<SearchBarApp> {
                               EdgeInsets.symmetric(horizontal: 16.0)),
                           onTap: () {
                             controller.openView();
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           },
                           onChanged: (_) {
                             controller.openView();
@@ -76,35 +77,17 @@ class _SearchBarAppState extends State<SearchBarApp> {
                       },
                       suggestionsBuilder:
                           (BuildContext context, SearchController controller) {
-                        return [
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(
-                              maxHeight: 400.0,
-                            ),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (BuildContext context, int index) {
-                                final String item = 'item: $index';
-                                return ListTile(
-                                  title: Text(item),
-                                  onTap: () {
-                                    debugPrint('Selected: $item');
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Selected: $item'),
-                                        behavior: SnackBarBehavior.floating,
-                                      ),
-                                    );
-                                    setState(() {
-                                      // controller.closeView(item);
-                                    });
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                        ];
+                        return List<ListTile>.generate(5, (int index) {
+                          final String item = 'item $index';
+                          return ListTile(
+                            title: Text(item),
+                            onTap: () {
+                              setState(() {
+                                controller.closeView(item);
+                              });
+                            },
+                          );
+                        });
                       })
                 ],
               ),
